@@ -7,12 +7,12 @@ import Footer from '../components/footer'
 import TimerLayar from '../components/timerLayar'
 import ModalLayar from '../components/modalLayar'
 import { globalState } from '../../../context/context';
-import socketIo from 'socket.io-client'
+import { useSocket } from '../../../context/socketContext'
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-const socket = socketIo (BASE_URL)
+
 
 const layar = () => {
-
+    const socket = useSocket();
     const router = useRouter()
 
     // ini state

@@ -18,7 +18,7 @@ const login = () => {
         username: nama,
         password: password
       }
-      await axios.post(BASE_URL + "/api/dewan/login", form)
+      await axios.post(BASE_URL + "/api/layar/login", form)
       .then(res => {
         if (res.data.logged) {
           let data = res.data.data

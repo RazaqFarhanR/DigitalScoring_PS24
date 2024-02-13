@@ -1,20 +1,12 @@
 import axios from 'axios'
 import React, { useContext, useEffect, useState } from 'react'
-import socketIo from 'socket.io-client'
 import { globalState } from '../../../context/context'
+import { useSocket } from '../../../context/socketContext';
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-let socket
+
 
 const timerLayar = (props) => {
-
-    useEffect(() => {
-        socketInitializer()
-    }, [])
-
-    
-    const socketInitializer = async () => {
-        socket = socketIo.connect(BASE_URL)
-    }
+    const socket = useSocket();
 
     useEffect(() =>{
         socket.emit('join', id_jadwal)

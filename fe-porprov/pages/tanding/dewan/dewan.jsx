@@ -6,14 +6,12 @@ import { useRouter } from 'next/router'
 import axios from 'axios'
 import { globalState } from '../../../context/context';
 import ModalDewan from '../components/modalDewan'
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-import { socket } from '../../../utils/socket'
+import { useSocket } from '../../../context/socketContext'
 
-import socketIo from 'socket.io-client'
-// const socket = socketIo (BASE_URL)
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const dewan = () => {
-
+    const socket = useSocket();
     const router = useRouter ()
 
     // ini state
@@ -59,32 +57,6 @@ const dewan = () => {
         }
         return header
     }
-
-    //socket    
-    const [isConnected, setIsConnected] = useState(socket.connected);
-    useEffect(() => {
-        function onConnect() {
-            setIsConnected(true);
-            // console.log("connected");
-            // console.log(isConnected);   
-        }
-        // if (socket.connected === false) {
-        //     socket.connect({'forceNew': true});
-        //     console.log(isConnected);   
-        // }
-  
-        function onDisconnect() {
-            setIsConnected(false);
-        }
-
-        socket.on('connect', onConnect);
-        socket.on('disconnect', onDisconnect);
-        
-        return () => {
-            socket.off('connect', onConnect);
-            socket.off('disconnect', onDisconnect);
-        };
-    }, []);
 
     const getNilai = async () => {
         const jadwal = localStorage.getItem ('jadwal')
@@ -1425,7 +1397,7 @@ const dewan = () => {
         socket.emit('join', jadwal)
     
         return () => {
-            socket.off('join')
+            // socket.off('join')
         }
     }, [])
     
@@ -1491,7 +1463,7 @@ const dewan = () => {
             socket.off('change_nilai_juri', ubah_data)
             // console.log('closed');
         }
-    }, [isConnected === true])
+    }, [])
 
     return (
         <>

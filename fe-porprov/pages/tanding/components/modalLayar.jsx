@@ -1,9 +1,7 @@
 import axios from 'axios';
 import React, {useContext, useState, useEffect} from 'react'
 import { globalState } from '../../../context/context';
-import socketIo from 'socket.io-client'
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-
 
 const modalLayar = (props) => {
     const socket = props.socket
