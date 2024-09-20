@@ -9,9 +9,8 @@ import socketIo from 'socket.io-client'
 import { useRouter } from 'next/router'
 import TimerLayar from '../components/timerLayar'
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-import { socket } from '../../../utils/socket'
 
-// const socket = socketIo.connect(BASE_URL)
+const socket = socketIo.connect(BASE_URL)
 
 const dewanSeni = () => {
     
@@ -25,6 +24,7 @@ const dewanSeni = () => {
     const [hukum, setHukum] = useState ([])
     const [nilai, setNilai] = useState ([])
     const [nilaiSort, setNilaiSort] = useState ([])
+    const [nilaiSorted, setNilaiSorted] = useState ([])
     const [kategori, setKategori] = useState ('')
     const [aktif, setAktif] = useState (0)
     const [median, setMedian] = useState (0)
@@ -135,29 +135,91 @@ const dewanSeni = () => {
 
         // hitung median
         let sort = nilai.sort ((a, b) => a.total_skor - b.total_skor)
-        let n1 = sort [4]
-        let n2 = sort [5]
-        let x1 = n1.total_skor
-        let x2 = n2.total_skor
-        let median = (x1 + x2)/2
-        setMedian (median)
-
-        // hitung skor akhir
-        let total = median + hukum.total
-        setTotal (total)
-
-        // hitung deviasi
-        let arrayNilai = []
-        let sum = 0
-        for (let i=0; i< nilai.length; i++) {
-            let skorA = nilai [i]
-            arrayNilai.push (skorA.total_skor)
-            sum += arrayNilai [i]
+        
+        if (jadwal.jml_juri === 4) {
+            let n1 = sort [1]
+            let n2 = sort [2]
+            let x1 = n1.total_skor
+            let x2 = n2.total_skor
+            let median = (x1 + x2)/2
+            setMedian (median)
+    
+            // hitung skor akhir
+            let total = median + hukum.total
+            setTotal (total)
+        } else if (jadwal.jml_juri === 6) {
+            let n1 = sort [2]
+            let n2 = sort [3]
+            let x1 = n1.total_skor
+            let x2 = n2.total_skor
+            let median = (x1 + x2)/2
+            setMedian (median)
+    
+            // hitung skor akhir
+            let total = median + hukum.total
+            setTotal (total)
+        } else if (jadwal.jml_juri === 8) {
+            let n1 = sort [3]
+            let n2 = sort [4]
+            let x1 = n1.total_skor
+            let x2 = n2.total_skor
+            let median = (x1 + x2)/2
+            setMedian (median)
+    
+            // hitung skor akhir
+            let total = median + hukum.total
+            setTotal (total)
+        } else if (jadwal.jml_juri === 10) {
+            let n1 = sort [4]
+            let n2 = sort [5]
+            let x1 = n1.total_skor
+            let x2 = n2.total_skor
+            let median = (x1 + x2)/2
+            setMedian (median)
+    
+            // hitung skor akhir
+            let total = median + hukum.total
+            setTotal (total)
         }
-        let deviasi = Math.sqrt (sum/arrayNilai.length) 
-        setDeviasi (deviasi)
+        
+        // hitung deviasi
+        // let arrayNilai = []
+        // let sum = 0
+        // for (let i=0; i< nilai.length; i++) {
+        //     let skorA = nilai [i]
+        //     arrayNilai.push (skorA.total_skor)
+        //     sum += arrayNilai [i]
+        // }
+        // let deviasi = Math.sqrt (sum/arrayNilai.length) 
+        // setDeviasi (deviasi)
 
-        // hitung total skor
+        let arrayNilai = [];
+        let sum = 0;
+
+        // Mengisi arrayNilai dengan total_skor dari setiap elemen di nilai
+        for (let i = 0; i < nilai.length; i++) {
+            let skorA = nilai[i];
+            arrayNilai.push(skorA.total_skor);
+            sum += skorA.total_skor;
+        }
+
+        // Menghitung rata-rata
+        let mean = sum / arrayNilai.length;
+
+        // Menghitung jumlah dari kuadrat selisih terhadap rata-rata
+        let sumOfSquares = 0;
+        for (let i = 0; i < arrayNilai.length; i++) {
+            sumOfSquares += Math.pow(arrayNilai[i] - mean, 2);
+        }
+
+        // Menghitung varians
+        let variance = sumOfSquares / arrayNilai.length;
+
+        // Menghitung standar deviasi
+        let deviasi = Math.sqrt(variance);
+        setDeviasi(deviasi);
+        sortingUrutanJuri(jadwal, nilai)
+
     }
 
     const selesai = () => {
@@ -317,7 +379,6 @@ const dewanSeni = () => {
                 console.log(err.message);
             })
         }
-        socket.emit ('juriToDewanLayar', id_jadwal)
     }
 
     // kurang nilai hukum
@@ -423,34 +484,7 @@ const dewanSeni = () => {
                 console.log(err.message);
             })
         }
-        socket.emit ('juriToDewanLayar', id_jadwal)
     }
-
-    //socket    
-    const [isConnected, setIsConnected] = useState(socket.connected);
-    useEffect(() => {
-        function onConnect() {
-            setIsConnected(true);
-            // console.log("connected");
-            // console.log(isConnected);   
-        }
-        // if (socket.connected === false) {
-        //     socket.connect({'forceNew': true});
-        //     console.log(isConnected);   
-        // }
-    
-        function onDisconnect() {
-            setIsConnected(false);
-        }
-
-        socket.on('connect', onConnect);
-        socket.on('disconnect', onDisconnect);
-        
-        return () => {
-            socket.off('connect', onConnect);
-            socket.off('disconnect', onDisconnect);
-        };
-    }, []);
 
     useEffect(() => {
         const jadwal = JSON.parse(localStorage.getItem ('jadwalSeni'))
@@ -463,7 +497,7 @@ const dewanSeni = () => {
     
         return () => {
             socket.off('joinSeni', data)
-            // socket.close()
+            socket.close()
         }
     }, [])
 
@@ -472,7 +506,6 @@ const dewanSeni = () => {
          router.push ('/seni/dewan/login') 
         }
     }
-
     
     useEffect (() => {
         setPeserta (JSON.parse (localStorage.getItem ('pesertaSeni')))   
@@ -480,7 +513,21 @@ const dewanSeni = () => {
         // isLogged ()
         getNilai()
         // sortNilai()
-    }, [isConnected === true])
+    }, [])
+    
+    const sortingUrutanJuri = (jadwal, nilai) => {
+        if (jadwal.jml_juri === 4) {
+            setNilaiSorted(nilai.filter(item => [1, 2, 3, 4].includes(item.juri.no)).sort((a, b) => a.total - b.total));
+        }else if (jadwal.jml_juri === 6) {
+            setNilaiSorted(nilai.filter(item => [1, 2, 3, 4, 5, 6].includes(item.juri.no)).sort((a, b) => a.total - b.total));
+        }else if (jadwal.jml_juri === 8) {
+            setNilaiSorted(nilai.filter(item => [1, 2, 3, 4, 5, 6, 7, 8].includes(item.juri.no)).sort((a, b) => a.total - b.total));
+        }else if (jadwal.jml_juri === 10) {
+            setNilaiSorted(nilai.filter(item => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].includes(item.juri.no)).sort((a, b) => a.total - b.total));
+        }
+    }
+
+    // const sortedFirstJuri = nilaiSort.slice(0, jadwal.jml_juri).sort((a, b) => a.total - b.total);
 
     return (
         <>
@@ -554,19 +601,61 @@ const dewanSeni = () => {
                                 {/* table skor juri */}
                                 <table className='w-full table-fixed border-separate border-spacing-x-2'>
                                     <thead className='bg-[#2C2F48]'>
-                                        <tr>
-                                            <th colSpan={2} className="border-2 border-[#2C2F48]">Juri</th>
-                                            <th className='border-2 border-[#2C2F48]'>1</th>
-                                            <th className='border-2 border-[#2C2F48]'>2</th>
-                                            <th className='border-2 border-[#2C2F48]'>3</th>
-                                            <th className='border-2 border-[#2C2F48]'>4</th>
-                                            <th className='border-2 border-[#2C2F48]'>5</th>
-                                            <th className='border-2 border-[#2C2F48]'>6</th>
-                                            <th className='border-2 border-[#2C2F48]'>7</th>
-                                            <th className='border-2 border-[#2C2F48]'>8</th>
-                                            <th className='border-2 border-[#2C2F48]'>9</th>
-                                            <th className='border-2 border-[#2C2F48]'>10</th>
-                                        </tr>
+                                        {(() => {
+                                            if (jadwal.jml_juri === 4) {
+                                                return (
+                                                    <tr>
+                                                        <th colSpan={2} className="border-2 border-[#2C2F48]">Juri</th>
+                                                        <th className='border-2 border-[#2C2F48]'>1</th>
+                                                        <th className='border-2 border-[#2C2F48]'>2</th>
+                                                        <th className='border-2 border-[#2C2F48]'>3</th>
+                                                        <th className='border-2 border-[#2C2F48]'>4</th>
+                                                    </tr>
+                                                )
+                                            } else if (jadwal.jml_juri === 6) {
+                                                return (
+                                                    <tr>
+                                                        <th colSpan={2} className="border-2 border-[#2C2F48]">Juri</th>
+                                                        <th className='border-2 border-[#2C2F48]'>1</th>
+                                                        <th className='border-2 border-[#2C2F48]'>2</th>
+                                                        <th className='border-2 border-[#2C2F48]'>3</th>
+                                                        <th className='border-2 border-[#2C2F48]'>4</th>
+                                                        <th className='border-2 border-[#2C2F48]'>5</th>
+                                                        <th className='border-2 border-[#2C2F48]'>6</th>
+                                                    </tr>
+                                                )
+                                            } else if (jadwal.jml_juri === 8) {
+                                                return (
+                                                    <tr>
+                                                        <th colSpan={2} className="border-2 border-[#2C2F48]">Juri</th>
+                                                        <th className='border-2 border-[#2C2F48]'>1</th>
+                                                        <th className='border-2 border-[#2C2F48]'>2</th>
+                                                        <th className='border-2 border-[#2C2F48]'>3</th>
+                                                        <th className='border-2 border-[#2C2F48]'>4</th>
+                                                        <th className='border-2 border-[#2C2F48]'>5</th>
+                                                        <th className='border-2 border-[#2C2F48]'>6</th>
+                                                        <th className='border-2 border-[#2C2F48]'>7</th>
+                                                        <th className='border-2 border-[#2C2F48]'>8</th>
+                                                    </tr>
+                                                )
+                                            } else {
+                                                return (
+                                                    <tr>
+                                                        <th colSpan={2} className="border-2 border-[#2C2F48]">Juri</th>
+                                                        <th className='border-2 border-[#2C2F48]'>1</th>
+                                                        <th className='border-2 border-[#2C2F48]'>2</th>
+                                                        <th className='border-2 border-[#2C2F48]'>3</th>
+                                                        <th className='border-2 border-[#2C2F48]'>4</th>
+                                                        <th className='border-2 border-[#2C2F48]'>5</th>
+                                                        <th className='border-2 border-[#2C2F48]'>6</th>
+                                                        <th className='border-2 border-[#2C2F48]'>7</th>
+                                                        <th className='border-2 border-[#2C2F48]'>8</th>
+                                                        <th className='border-2 border-[#2C2F48]'>9</th>
+                                                        <th className='border-2 border-[#2C2F48]'>10</th>
+                                                    </tr>
+                                                )
+                                            }
+                                        })()}
                                     </thead> 
                                     <tbody className='text-center text-[#2C2F48] font-medium'>
                                         {(() => {
@@ -577,7 +666,7 @@ const dewanSeni = () => {
                                                         <tr>
                                                             <>
                                                                 <td colSpan={2} className="text-lg font-semibold border-2 border-[#2C2F48]">Teknik</td>
-                                                                {nilai.map ((item, index) => (
+                                                                {nilai.slice(0, jadwal.jml_juri).map((item, index) => (
                                                                     <td key={index + 1} className='border-2 border-[#2C2F48] text-[#2C2F48]'>
                                                                         <span>{item.technique.toFixed(2)}</span>
                                                                     </td>
@@ -587,7 +676,7 @@ const dewanSeni = () => {
                                                         {/* Firmness */}
                                                         <tr>
                                                             <td colSpan={2} className="text-lg font-semibold border-2 border-[#2C2F48]">Kemantapan</td>
-                                                            {nilai.map ((item, index) => (
+                                                            {nilai.slice(0, jadwal.jml_juri).map((item, index) => (
                                                                 <td key={index + 1} className='border-2 border-[#2C2F48] text-black'>
                                                                     <span>{item.firmness.toFixed(2)}</span>
                                                                 </td>
@@ -596,7 +685,7 @@ const dewanSeni = () => {
                                                         {/* Soulfulness */}
                                                         <tr>
                                                             <td colSpan={2} className="text-lg font-semibold border-2 border-[#2C2F48]">Ekspresi</td>
-                                                            {nilai.map ((item, index) => (
+                                                            {nilai.slice(0, jadwal.jml_juri).map((item, index) => (
                                                                 <td key={index + 1} className='border-2 border-[#2C2F48] text-black'>
                                                                     <span>{item.soulfulness.toFixed(2)}</span>
                                                                 </td>
@@ -605,7 +694,7 @@ const dewanSeni = () => {
                                                         {/* Skor */}
                                                         <tr className='bg-[#2C2F48] text-white'>
                                                             <td colSpan={2} className="text-lg font-semibold border-2 border-[#2C2F48]">Total</td>
-                                                            {nilai.map ((item, index) => (
+                                                            {nilai.slice(0, jadwal.jml_juri).map((item, index) => (
                                                                 <td key={index + 1} className='border-2 border-[#2C2F48]'>
                                                                     <span>{item.total?.toFixed(2)}</span>
                                                                 </td>
@@ -614,7 +703,7 @@ const dewanSeni = () => {
                                                         {/* Total skor */}
                                                         <tr className='bg-[#4C4F6D] text-white'>
                                                             <td colSpan={2} className="text-lg font-semibold border-2 border-[#4C4F6D]">Total Skor</td>
-                                                            {nilai.map ((item, index) => (
+                                                            {nilai.slice(0, jadwal.jml_juri).map((item, index) => (
                                                                 <td key={index + 1} className='border-2 border-[#4C4F6D]'>
                                                                     <span>{(item.total_skor).toFixed(2)}</span>
                                                                 </td>
@@ -630,7 +719,7 @@ const dewanSeni = () => {
                                                         <tr>
                                                             <>
                                                                 <td colSpan={2} className="text-lg font-semibold border-2 border-[#2C2F48]">Teknik</td>
-                                                                {nilai.map ((item, index) => (
+                                                                {nilai.slice(0, jadwal.jml_juri).map((item, index) => (
                                                                     <td key={index + 1} className='border-2 border-[#2C2F48] text-[#2C2F48]'>
                                                                         <span>{item.technique}</span>
                                                                     </td>
@@ -640,7 +729,7 @@ const dewanSeni = () => {
                                                         {/* Firmness */}
                                                         <tr>
                                                             <td colSpan={2} className="text-lg font-semibold border-2 border-[#2C2F48]">Kemantapan</td>
-                                                            {nilai.map ((item, index) => (
+                                                            {nilai.slice(0, jadwal.jml_juri).map((item, index) => (
                                                                 <td key={index + 1} className='border-2 border-[#2C2F48] text-black'>
                                                                     <span>{item.firmness}</span>
                                                                 </td>
@@ -649,7 +738,7 @@ const dewanSeni = () => {
                                                         {/* Soulfulness */}
                                                         <tr>
                                                             <td colSpan={2} className="text-lg font-semibold border-2 border-[#2C2F48]">Ekspresi</td>
-                                                            {nilai.map ((item, index) => (
+                                                            {nilai.slice(0, jadwal.jml_juri).map((item, index) => (
                                                                 <td key={index + 1} className='border-2 border-[#2C2F48] text-black'>
                                                                     <span>{item.soulfulness}</span>
                                                                 </td>
@@ -658,7 +747,7 @@ const dewanSeni = () => {
                                                         {/* Skor */}
                                                         <tr className='bg-[#2C2F48] text-white'>
                                                             <td colSpan={2} className="text-lg font-semibold border-2 border-[#2C2F48]">Total</td>
-                                                            {nilai.map ((item, index) => (
+                                                            {nilai.slice(0, jadwal.jml_juri).map((item, index) => (
                                                                 <td key={index + 1} className='border-2 border-[#2C2F48]'>
                                                                     <span>{item.total?.toFixed(2)}</span>
                                                                 </td>
@@ -667,7 +756,7 @@ const dewanSeni = () => {
                                                         {/* Total skor */}
                                                         <tr className='bg-[#4C4F6D] text-white'>
                                                             <td colSpan={2} className="text-lg font-semibold border-2 border-[#4C4F6D]">Total Skor</td>
-                                                            {nilai.map ((item, index) => (
+                                                            {nilai.slice(0, jadwal.jml_juri).map((item, index) => (
                                                                 <td key={index + 1} className='border-2 border-[#4C4F6D]'>
                                                                     <span>{(item.total_skor).toFixed(2)}</span>
                                                                 </td>
@@ -681,18 +770,18 @@ const dewanSeni = () => {
                                                         {/* Skor A */}
                                                         <tr>
                                                             <td colSpan={2} className="text-lg font-semibold border-2 border-[#2C2F48]">Skor A</td>
-                                                            {nilai.map ((item, index) => (
+                                                            {nilai.slice(0, jadwal.jml_juri).map((item, index) => (
                                                                 <td key={index + 1} className='border-2 border-[#2C2F48]'>
                                                                     <span>
                                                                         {(item.skor_a)?.toFixed(2)}
                                                                     </span>
-                                                                </td>
+                                                                </td>
                                                             ))}
                                                         </tr>
                                                         {/* Skor B */}
                                                         <tr>
                                                             <td colSpan={2} className="text-lg font-semibold border-2 border-[#2C2F48]">Kemantapan</td>
-                                                            {nilai.map ((item, index) => (
+                                                            {nilai.slice (0, jadwal.jml_juri).map((item, index) => (
                                                                 <td key={index + 1} className='border-2 border-[#2C2F48]'>
                                                                     <span>
                                                                         {(item.skor_b)?.toFixed(2)}
@@ -703,7 +792,7 @@ const dewanSeni = () => {
                                                         {/* Total skor */}
                                                         <tr className='bg-[#2C2F48] text-white'>
                                                             <td colSpan={2} className="text-lg font-semibold border-2 border-[#2C2F48]">Total Skor</td>
-                                                            {nilai.map ((item, index) => (
+                                                            {nilai.slice(0, jadwal.jml_juri).map((item, index) => (
                                                                 <td key={index + 1} className='border-2 border-[#2C2F48]'>
                                                                     <span>
                                                                         {(item.total_skor).toFixed(2)}
@@ -721,21 +810,23 @@ const dewanSeni = () => {
                                 {/* Table urutan juri */}
                                 <table className='w-full table-fixed border-separate border-spacing-x-2 font-medium'>
                                     <tbody className='text-center'>
-                                            <tr className='bg-[#2C2F48]'>
-                                                <th colSpan={2} rowSpan={2} className="text-lg border-2 border-[#2C2F48] ">Urutan Nilai</th>
-                                                {nilaiSort.sort ((a,b) => a.total - b.total).map ((item, index)=> (
-                                                    <th key={index + 1}>
-                                                        {item.juri.no}
-                                                    </th>
-                                                ))}
-                                            </tr>
-                                            <tr className='text-[#2C2F48]'>
-                                                {nilaiSort.sort ((a,b) => a.total - b.total).map ((item, index) => (
-                                                    <th key={index + 1} className='border-2 border-[#2C2F48]'>{(item.total_skor).toFixed(2)}</th>
-                                                ))}
-                                            </tr>
+                                        <tr className='bg-[#2C2F48]'>
+                                            <th colSpan={2} rowSpan={2} className="text-lg border-2 border-[#2C2F48]">Urutan Nilai</th>
+                                            {nilaiSorted.map((item, index) => (
+                                                <th key={index}>
+                                                    {item.juri?.no}
+                                                </th>
+                                            ))}
+                                        </tr>
+                                        <tr className='text-[#2C2F48]'>
+                                            {nilaiSorted.map((item, index) => (
+                                                <th key={index} className='border-2 border-[#2C2F48]'>
+                                                    {item.total_skor.toFixed(2)}
+                                                </th>
+                                            ))}
+                                        </tr>
                                     </tbody>
-                                </table>
+                            </table>
                             </div>
                             {/* border hukuman */}
                             <div className="border-2 border-[#2C2F48] p-5 space-y-7 rounded-lg">
@@ -1381,7 +1472,7 @@ const dewanSeni = () => {
                                         <span className='text-2xl font-semibold'>Median</span>
                                     </div>
                                     <div className="text-[#2C2F48] py-1 px-4 w-full flex justify-center border-2 border-[#2C2F48]">
-                                        <span className='text-4xl font-bold'>{median?.toFixed(2)}</span>
+                                        <span className='text-4xl font-bold'>{median?.toFixed(3)}</span>
                                     </div>
                                 </div>
                                 {/* skor akhir */}
@@ -1389,7 +1480,7 @@ const dewanSeni = () => {
                                     <div className="grid grid-rows-2 text-center gap-y-2 px-2 h-full">
                                         <div className="grid grid-cols-2 gap-x-4 items-center justify-center">
                                             <span className='text-xl font-semibold rounded-lg bg-[#2C2F48] py-2'>Skor Akhir</span>
-                                            <span className='text-xl font-semibold rounded-lg bg-white text-black border-2 border-[#2C2F48]'>{total.toFixed(2)}</span>
+                                            <span className='text-xl font-semibold rounded-lg bg-white text-black border-2 border-[#2C2F48]'>{total.toFixed(3)}</span>
                                         </div>
                                         <div className="grid grid-cols-2 gap-x-4 items-center justify-center">
                                             <span className='text-xl font-semibold rounded-lg bg-[#2C2F48] py-2'>Standart Deviasi</span>

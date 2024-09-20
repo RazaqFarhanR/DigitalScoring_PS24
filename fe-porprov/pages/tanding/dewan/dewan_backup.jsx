@@ -203,8 +203,6 @@ const dewan = () => {
             console.log(err.message);
         })
 
-        console.log(BASE_URL +`/api/nilai/tanding/log/1/biru/${id_jadwal}/i`);
-
         //get juri 2 biru
         axios.get (BASE_URL +`/api/nilai/tanding/log/2/biru/${id_jadwal}/i`)
         .then (res => {
@@ -279,7 +277,7 @@ const dewan = () => {
         })
 
         //get juri 3 biru
-        axios.get (BASE_URL +`/api/nilai/tanding/log/3/biru/${id_jadwal}/ii`)
+        axios.get (BASE_URL +`/api/nilai/tanding/log//3/biru/${id_jadwal}/ii`)
         .then (res => {
             setJuri3Biru2 (res.data.data)
         })
@@ -900,7 +898,6 @@ const dewan = () => {
     // delete binaan
     const deleteBinaan = (e) => {
         const jadwal = localStorage.getItem ('jadwal')
-        console.log(jadwal);
 
         // babak 1
         if (e == 'hapusBinaanBiru1') {
@@ -970,7 +967,7 @@ const dewan = () => {
                 babak : 'III',
                 id_jadwal : jadwal
             }
-            axios.delete (BASE_URL + `/api/nilai/tanding/biru/binaan`, {data : form})
+            axios.delete (BASE_URL + `/api/nilai/tanding/binaan`, {data : form})
             .then (res => {
                 socket.emit('dewanToLayar', jadwal)
                 getNilai ()
@@ -984,7 +981,7 @@ const dewan = () => {
                 babak : 'III',
                 id_jadwal : jadwal
             }
-            axios.delete (BASE_URL + `/api/nilai/tanding/merah/binaan`, {data : form})
+            axios.delete (BASE_URL + `/api/nilai/tanding/binaan`, {data : form})
             .then (res => {
                 socket.emit('dewanToLayar', jadwal)
                 getNilai ()
@@ -1051,16 +1048,14 @@ const dewan = () => {
                 babak : 'II',
                 id_jadwal : jadwal
             }
-            axios.delete (BASE_URL +`/api/nilai/tanding/merah/teguran`, {data : form})
+            axios.delete (BASE_URL + `/api/nilai/tanding/merah/teguran`, {data : form})
             .then (res => {
                 socket.emit('dewanToLayar', jadwal)
                 getNilai ()
                 getJadwal()
-                console.log('success');
             })
             .catch (err => {
                 console.log(err.response.data.message);
-                console.log('failed');
             })
         }
 
@@ -2047,7 +2042,7 @@ const dewan = () => {
                                             <div className="col-span-3 text-[#222954]">
                                                 <div className="grid grid-cols-4 gap-x-3">
                                                     <button onClick={() => deleteJatuhan ('hapusJatuhanMerah2')} className='bg-yellow-300 hover:bg-yellow-400     text-lg font-semibold py-2.5 rounded-lg'>Hapus Jatuhan</button>
-                                                    <button onClick={() => deleteBinaan ('hapusBinaanMerah2')} className='bg-yellow-300 hover:bg-yellow-400     text-lg font-semibold py-2.5 rounded-lg'>Hapus Binaan</button>
+                                                    <button onClick={() => deleteJatuhan ('hapusJatuhanMerah2')} className='bg-yellow-300 hover:bg-yellow-400     text-lg font-semibold py-2.5 rounded-lg'>Hapus Binaan</button>
                                                     <button onClick={() => deleteTeguran ('hapusTeguranMerah2')} className='bg-yellow-300 hover:bg-yellow-400     text-lg font-semibold py-2.5 rounded-lg'>Hapus Teguran</button>
                                                     <button onClick={() => deletePeringatan ('hapusPeringatanMerah2')} className='bg-yellow-300 hover:bg-yellow-400     text-lg font-semibold py-2.5 rounded-lg'>Hapus Peringatan</button>
                                                 </div>
@@ -2122,9 +2117,10 @@ const dewan = () => {
                                                     <button onClick={() => deleteTeguran ('hapusTeguranMerah3')} className='bg-yellow-300 hover:bg-yellow-400 text-lg font-semibold py-2.5 rounded-lg'>Hapus Teguran</button>
                                                     <button onClick={() => deletePeringatan ('hapusPeringatanMerah3')} className='bg-yellow-300 hover:bg-yellow-400 text-lg font-semibold py-2.5 rounded-lg'>Hapus Peringatan</button>
                                                 </div>
-                                            </div>                                            
+                                            </div>
                                         </div>
-                                        {/* wrapper button kartu kuning */}
+
+                                        {/* wrapper button kartu kuning */}                                            
                                         <div className="grid grid-cols-7">
                                             {/* wrapper button delete nilai biru */}
                                             <div className="col-span-3">
@@ -2142,6 +2138,7 @@ const dewan = () => {
                                                 </div>
                                             </div>
                                         </div>
+                                        
                                     </div>
                                 )
                             }

@@ -10,7 +10,7 @@ import { useRouter } from 'next/router'
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 // socket io
-const socket = socketIo.connect(BASE_URL)
+const socket = socketIo (BASE_URL)
 
 const detailSelesai = () => {
 
@@ -92,10 +92,7 @@ const detailSelesai = () => {
             .catch (err => {
                 console.log(err.response.data.message);
             })
-        } else {
-        }
-        // console.log(peserta.kategori);
-
+        } 
         //nilai berdasarkan besar nilai
         if (peserta.kategori == 'tunggal') {
             await axios.get (BASE_URL + `/api/nilai/tunggal/jadwal/${id_jadwal}/${id_peserta}`)
@@ -149,82 +146,103 @@ const detailSelesai = () => {
 
         // hitung median
         let sort = nilai.sort ((a, b) => a.total_skor - b.total_skor)
-        let n1 = sort [4]
-        let n2 = sort [5]
-        let x1 = n1?.total_skor
-        let x2 = n2?.total_skor
-        let median = (x1 + x2)/2
-        setMedian (median)
-
-        // hitung skor akhir
-        let total = median + hukum?.total
-        setTotal (total)
+        
+        if (jadwal.jml_juri === 4) {
+            let n1 = sort [1]
+            let n2 = sort [2]
+            let x1 = n1.total_skor
+            let x2 = n2.total_skor
+            let median = (x1 + x2)/2
+            setMedian (median)
+    
+            // hitung skor akhir
+            let total = median + hukum.total
+            setTotal (total)
+        } else if (jadwal.jml_juri === 6) {
+            let n1 = sort [2]
+            let n2 = sort [3]
+            let x1 = n1.total_skor
+            let x2 = n2.total_skor
+            let median = (x1 + x2)/2
+            setMedian (median)
+    
+            // hitung skor akhir
+            let total = median + hukum.total
+            setTotal (total)
+        } else if (jadwal.jml_juri === 8) {
+            let n1 = sort [3]
+            let n2 = sort [4]
+            let x1 = n1.total_skor
+            let x2 = n2.total_skor
+            let median = (x1 + x2)/2
+            setMedian (median)
+    
+            // hitung skor akhir
+            let total = median + hukum.total
+            setTotal (total)
+        } else if (jadwal.jml_juri === 10) {
+            let n1 = sort [4]
+            let n2 = sort [5]
+            let x1 = n1.total_skor
+            let x2 = n2.total_skor
+            let median = (x1 + x2)/2
+            setMedian (median)
+    
+            // hitung skor akhir
+            let total = median + hukum.total
+            setTotal (total)
+        }
 
         // hitung deviasi
-        let arrayNilai = []
-        let sum = 0
-        for (let i = 0; i < nilai.length; i++) {
-            let skorA = nilai [i]
-            arrayNilai.push (skorA.total_skor)
-            sum += (arrayNilai[i])
-        }
-        let deviasi = Math.sqrt (sum/arrayNilai.length)
-        setDeviasi (deviasi)
-    }
-
-    //socket    
-    const [isConnected, setIsConnected] = useState(socket.connected);
-    useEffect(() => {
-        function onConnect() {
-            setIsConnected(true);
-            // console.log("connected");
-            // console.log(isConnected);   
-        }
-        // if (socket.connected === false) {
-        //     socket.connect({'forceNew': true});
-        //     console.log(isConnected);   
+        // let arrayNilai = []
+        // let sum = 0
+        // for (let i = 0; i < nilai.length; i++) {
+        //     let skorA = nilai [i]
+        //     arrayNilai.push (skorA.total_skor)
+        //     sum += (arrayNilai[i])
         // }
-    
-        function onDisconnect() {
-            setIsConnected(false);
+        // let deviasi = Math.sqrt (sum/arrayNilai.length)
+        // setDeviasi (deviasi)
+
+        let arrayNilai = [];
+        let sum = 0;
+
+        // Mengisi arrayNilai dengan total_skor dari setiap elemen di nilai
+        for (let i = 0; i < nilai.length; i++) {
+            let skorA = nilai[i];
+            arrayNilai.push(skorA.total_skor);
+            sum += skorA.total_skor;
         }
 
-        socket.on('connect', onConnect);
-        socket.on('disconnect', onDisconnect);
-        
-        return () => {
-            socket.off('connect', onConnect);
-            socket.off('disconnect', onDisconnect);
-        };
-    }, []);
+        // Menghitung rata-rata
+        let mean = sum / arrayNilai.length;
 
-    useEffect(() => {
-        const jadwal = JSON.parse(localStorage.getItem ('jadwalSeni'))
-        const user = JSON.parse(localStorage.getItem('user'))
-        let data ={
-            user: user.username,
-            id_jadwal: jadwal.id
+        // Menghitung jumlah dari kuadrat selisih terhadap rata-rata
+        let sumOfSquares = 0;
+        for (let i = 0; i < arrayNilai.length; i++) {
+            sumOfSquares += Math.pow(arrayNilai[i] - mean, 2);
         }
-        socket.emit('joinSeni', data)
-    
-        return () => {
-            socket.off('joinSeni', data)
-            socket.close()
-        }
-    }, [])
+
+        // Menghitung varians
+        let variance = sumOfSquares / arrayNilai.length;
+
+        // Menghitung standar deviasi
+        let deviasi = Math.sqrt(variance);
+        setDeviasi(deviasi);
+
+    }
 
     const ubah_data = () => socket.emit ('init_data')
 
     useEffect (() => {
         setPeserta (JSON.parse (localStorage.getItem ('pesertaSeni')))
-        socket.on('getDewanLayar', getNilai)
-        // socket.emit ('init_data')
-        // socket.on ('getData', getNilai)
-        // socket.on ('change_data', ubah_data)
+        socket.emit ('init_data')
+        socket.on ('getData', getNilai)
+        socket.on ('change_data', ubah_data)
         socket.on('start_seni', start)
         socket.on('stop_seni', stop)
         getNilai()
-    }, [isConnected === true])
+    }, [])
 
     return (
     <>
@@ -289,25 +307,67 @@ const detailSelesai = () => {
                 {/* table skor juri */}
                 <table className='w-full table-fixed border-separate border-spacing-x-2'>
                     <thead className='bg-[#2C2F48]'>
-                        <tr>
-                            <th colSpan={2} className="border-2 border-[#2C2F48]">JURI</th>
-                            <th className='border-2 border-[#2C2F48]'>1</th>
-                            <th className='border-2 border-[#2C2F48]'>2</th>
-                            <th className='border-2 border-[#2C2F48]'>3</th>
-                            <th className='border-2 border-[#2C2F48]'>4</th>
-                            <th className='border-2 border-[#2C2F48]'>5</th>
-                            <th className='border-2 border-[#2C2F48]'>6</th>
-                            <th className='border-2 border-[#2C2F48]'>7</th>
-                            <th className='border-2 border-[#2C2F48]'>8</th>
-                            <th className='border-2 border-[#2C2F48]'>9</th>
-                            <th className='border-2 border-[#2C2F48]'>10</th>
-                        </tr>
+                        {(() => {
+                            if (jadwal.jml_juri === 4) {
+                                return (
+                                    <tr>
+                                        <th colSpan={2} className="border-2 border-[#2C2F48]">Juri</th>
+                                        <th className='border-2 border-[#2C2F48]'>1</th>
+                                        <th className='border-2 border-[#2C2F48]'>2</th>
+                                        <th className='border-2 border-[#2C2F48]'>3</th>
+                                        <th className='border-2 border-[#2C2F48]'>4</th>
+                                    </tr>
+                                )
+                            } else if (jadwal.jml_juri === 6) {
+                                return (
+                                    <tr>
+                                        <th colSpan={2} className="border-2 border-[#2C2F48]">Juri</th>
+                                        <th className='border-2 border-[#2C2F48]'>1</th>
+                                        <th className='border-2 border-[#2C2F48]'>2</th>
+                                        <th className='border-2 border-[#2C2F48]'>3</th>
+                                        <th className='border-2 border-[#2C2F48]'>4</th>
+                                        <th className='border-2 border-[#2C2F48]'>5</th>
+                                        <th className='border-2 border-[#2C2F48]'>6</th>
+                                    </tr>
+                                )
+                            } else if (jadwal.jml_juri === 8) {
+                                return (
+                                    <tr>
+                                        <th colSpan={2} className="border-2 border-[#2C2F48]">Juri</th>
+                                        <th className='border-2 border-[#2C2F48]'>1</th>
+                                        <th className='border-2 border-[#2C2F48]'>2</th>
+                                        <th className='border-2 border-[#2C2F48]'>3</th>
+                                        <th className='border-2 border-[#2C2F48]'>4</th>
+                                        <th className='border-2 border-[#2C2F48]'>5</th>
+                                        <th className='border-2 border-[#2C2F48]'>6</th>
+                                        <th className='border-2 border-[#2C2F48]'>7</th>
+                                        <th className='border-2 border-[#2C2F48]'>8</th>
+                                    </tr>
+                                )
+                            } else {
+                                return (
+                                    <tr>
+                                        <th colSpan={2} className="border-2 border-[#2C2F48]">Juri</th>
+                                        <th className='border-2 border-[#2C2F48]'>1</th>
+                                        <th className='border-2 border-[#2C2F48]'>2</th>
+                                        <th className='border-2 border-[#2C2F48]'>3</th>
+                                        <th className='border-2 border-[#2C2F48]'>4</th>
+                                        <th className='border-2 border-[#2C2F48]'>5</th>
+                                        <th className='border-2 border-[#2C2F48]'>6</th>
+                                        <th className='border-2 border-[#2C2F48]'>7</th>
+                                        <th className='border-2 border-[#2C2F48]'>8</th>
+                                        <th className='border-2 border-[#2C2F48]'>9</th>
+                                        <th className='border-2 border-[#2C2F48]'>10</th>
+                                    </tr>
+                                )
+                            }
+                        })()}
                     </thead> 
                     <tbody className='text-center text-[#2C2F48] font-medium'>
                         {/* Total skor */}
                         <tr className='text-[#2C2F48]'>
                             <td colSpan={2} className="text-2xl font-semibold border-2 border-[#2C2F48]">Total Skor</td>
-                            {nilai.map ((item, index) => (
+                            {nilai.slice(0, jadwal.jml_juri).map((item, index) => (
                                 <td key={index + 1} className='border-2 border-[#2C2F48]'>
                                     <span className='text-3xl font-bold'>
                                         {item.total_skor?.toFixed(2)}
@@ -323,22 +383,22 @@ const detailSelesai = () => {
                     <tbody className='text-center'>
                             <tr className='bg-[#2C2F48]'>
                                 <th colSpan={2} rowSpan={2} className="text-lg border-2 border-[#2C2F48] ">Urutan Nilai</th>
-                                {nilaiSort.sort ((a,b) => a.total - b.total).map ((item )=> (
+                                {nilaiSort.slice(0, jadwal.jml_juri).sort((a, b) => a.total - b.total).map((item, index) => (
                                     <th className=' font-bold'>
                                         {item.juri.no}
                                     </th>
                                 ))}
                             </tr>
                             <tr className='text-[#2C2F48]'>
-                                {nilaiSort.sort ((a,b) => a.total - b.total).map ((item, index) => {
+                                {nilaiSort.slice(0, jadwal.jml_juri).sort((a, b) => a.total - b.total).map((item, index) => {
                                     if (nilaiSort[5].id == item.id) {
                                         return(
-                                            <th key={index+1} className='border-2 border-[#2C2F48] text-3xl font-bold bg-yellow-300'>{(item.total_skor).toFixed(2)}</th>
+                                            <th key={index+1} className='border-2 border-[#2C2F48] text-3xl font-bold'>{(item.total_skor).toFixed(2)}</th>
                                         )
                                     }
                                     if (nilaiSort[4].id == item.id) {
                                         return(
-                                            <th key={index+1} className='border-2 border-[#2C2F48] text-3xl font-bold bg-yellow-300'>{(item.total_skor).toFixed(2)}</th>
+                                            <th key={index+1} className='border-2 border-[#2C2F48] text-3xl font-bold'>{(item.total_skor).toFixed(2)}</th>
                                         )
                                     }else{
                                         return(
@@ -357,7 +417,7 @@ const detailSelesai = () => {
                             <span className='text-2xl font-semibold'>Median</span>
                         </div>
                         <div className="text-[#2C2F48] py-1 px-4 w-full flex justify-center border-2 border-[#2C2F48]">
-                            <span className='text-4xl font-bold'>{median?.toFixed(2)}</span>
+                            <span className='text-4xl font-bold'>{median?.toFixed(3)}</span>
                         </div>
                     </div>
                     <div className='col-span-2'>
@@ -375,7 +435,7 @@ const detailSelesai = () => {
                             <span className='text-2xl font-semibold'>Skor Akhir</span>
                         </div>
                         <div className="text-[#2C2F48] py-1 px-4 w-full flex justify-center border-2 border-[#2C2F48]">
-                            <span className='text-4xl font-bold'>{total?.toFixed(2)}</span>
+                            <span className='text-4xl font-bold'>{total?.toFixed(3)}</span>
                         </div>
                     </div>
                     <div className='col-span-2'>

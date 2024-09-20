@@ -206,7 +206,7 @@ const detail = () => {
                     </Link>
                 </div>
 
-                {data.filter(a => a.selesai == true).sort((a, b) => b.partai - a.partai).map ((item, index) => (
+                {data.filter(a => a.selesai == true).map ((item, index) => (
                   <div key={index + 1} className="text-center rounded-lg shadow-lg pb-5">
                     <div className="bg-[#2C2F48] py-2 rounded-t-lg">
                       <span className='text-xl font-semibold'>Partai {item.partai} - {item.kelas} - {item.babak}</span>
@@ -269,7 +269,7 @@ const detail = () => {
                             </div>
                             <div className="grid grid-cols-2">
                               <span className='bg-[#2C2F48] rounded-l-lg font-semibold py-1 text-xl'>Skor Akhir</span>
-                              <span className='text-[#2C2F48] border-2 border-[#2C2F48] rounded-r-lg text-xl font-bold'>{item.skor_biru?.skor_akhir.toFixed(2)}</span>
+                              <span className='text-[#2C2F48] border-2 border-[#2C2F48] rounded-r-lg text-xl font-bold'>{item.skor_biru?.skor_akhir.toFixed(3)}</span>
                             </div>
                           </div>
                           {/* detail nilai button */}
@@ -334,7 +334,7 @@ const detail = () => {
                             </div>
                             <div className="grid grid-cols-2">
                               <span className='bg-[#2C2F48] rounded-l-lg font-semibold text-xl py-1'>Skor Akhir</span>
-                              <span className='text-[#2C2F48] border-2 border-[#2C2F48] rounded-r-lg font-bold text-xl'>{item.skor_merah?.skor_akhir.toFixed(2)}</span>
+                              <span className='text-[#2C2F48] border-2 border-[#2C2F48] rounded-r-lg font-bold text-xl'>{item.skor_merah?.skor_akhir.toFixed(3)}</span>
                             </div>
                           </div>
                           {/* detail nilai button */}

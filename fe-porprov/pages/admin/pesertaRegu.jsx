@@ -5,7 +5,7 @@ import Navbar from './components/navbar';
 import Sidebar from './components/sidebar';
 import Footer from './components/footer';
 import ModalPeserta from './components/modalPeserta';
-import ModalImport from './components/modalImportSeni';
+import ModalImport from './components/modalImport';
 import ModalDelete from './components/modalDelete';
 import { globalState } from '../../context/context';
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;

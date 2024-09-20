@@ -96,15 +96,7 @@ const modalImport = () => {
             axios.post (BASE_URL + `/api/seni/peserta/import/regu`, form, headerConfig())
             .then (res => {
                 setShowModalImport(false)
-                getPesertaRegu()
-            })
-            .catch (err => {
-                console.log(err.message);
-            })
-        } else{
-            axios.post (BASE_URL + `/api/seni/peserta/import/solo`, form, headerConfig())
-            .then (res => {
-                setShowModalImport(false)
+                getPesertaSoloKreatif()
             })
             .catch (err => {
                 console.log(err.message);

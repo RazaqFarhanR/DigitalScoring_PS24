@@ -86,6 +86,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       defaultValue: 0
     },
+    jml_juri: DataTypes.INTEGER,
     id_pemenang: DataTypes.UUID,
     id_nilai_biru: DataTypes.UUID,
     id_nilai_merah: DataTypes.UUID,      

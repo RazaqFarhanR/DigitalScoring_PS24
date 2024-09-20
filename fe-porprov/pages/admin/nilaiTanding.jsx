@@ -19,7 +19,6 @@ const nilaiTanding = () => {
     axios.get (BASE_URL + `/api/tanding/jadwal`)
     .then (res => {
       setDataJadwalTanding (res.data.data)
-      console.log(res.data.data);
     })
     .catch (err => {
       console.log(err.response.data.message);
@@ -91,14 +90,14 @@ const nilaiTanding = () => {
                       <td>{item.kelas}</td>
                       <td>{item.pemenang?.nama} - {item.pemenang?.kontingen}</td>
                       {(() => {
-                        if (item.pemenang?.id == item.id_peserta_biru) {
+                        if (item.pemenang?.id == item.id_biru) {
                           return (
                             <>
                               <td>Sudut Biru</td>
                               <td>({item.total_biru}) - ({item.total_merah})</td>
                             </>
                           )
-                        } else if (item.pemenang?.id == item.id_peserta_merah) {
+                        } else if (item.pemenang?.id == item.id_merah) {
                           return (
                             <>
                               <td>Sudut Merah</td>

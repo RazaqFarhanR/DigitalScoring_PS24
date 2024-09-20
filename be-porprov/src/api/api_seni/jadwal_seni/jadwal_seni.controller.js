@@ -82,6 +82,9 @@ module.exports = {
             let kategori = {event_id: req.user.event_id,kategori: req.params.kategori}
             const tgr = await Seni.findAll({
                 where:kategori,
+                attributes: {
+                    exclude: ["createdAt","updatedAt"]
+                },
                 include:[
                     //join peserta biru
                     {
@@ -133,7 +136,7 @@ module.exports = {
                     ['partai', 'ASC'],
                 ],
             })
-            return getResponse( req, res, tgr)
+            return getResponse( req, res, tgr)            
         } catch (error) {
             return errorResponse( req, res, error.message )
         }
@@ -332,7 +335,8 @@ module.exports = {
                 jk: req.body.jk,
                 golongan: req.body.golongan,
                 babak: req.body.babak,
-                event_id: req.user.event_id
+                event_id: req.user.event_id,
+                jml_juri: req.body.jml_juri,
             }
             let cekPartai = await Seni.findOne({
                 where: {
@@ -367,7 +371,8 @@ module.exports = {
                 kategori: "GANDA",
                 jk: req.body.jk,
                 kelas: req.body.kelas,
-                babak: req.body.babak
+                babak: req.body.babak,
+                jml_juri: req.body.jml_juri,
             }
             let cekPartai = await Seni.findOne({
                 where: {
@@ -401,7 +406,8 @@ module.exports = {
                 kategori: "REGU",
                 jk: req.body.jk,
                 kelas: req.body.kelas,
-                babak: req.body.babak
+                babak: req.body.babak,
+                jml_juri: req.body.jml_juri,
             }
             let cekPartai = await Seni.findOne({
                 where: {
@@ -447,7 +453,8 @@ module.exports = {
                 kategori: "SOLO_KREATIF",
                 jk: req.body.jk,
                 kelas: req.body.kelas,
-                babak: req.body.babak
+                babak: req.body.babak,
+                jml_juri: req.body.jml_juri,
             }
             let cekPartai = await Seni.findOne({
                 where: {
@@ -538,34 +545,34 @@ module.exports = {
                 console.log("merah " + devMerah);
 
                 if(skorMerah > skorBiru){
-                    console.log("menang merah skor");
+                    console.log("menang merah");
                     let selesai = {
-                        id_pemenang: peserta.id_peserta_merah,
+                        id_pemenang: merah.id_peserta,
                         selesai: 1,
                         aktif: 0
                     }
                     result = await Seni.update(selesai, {where: {id: req.params.id_jadwal}})
                 }else if(skorBiru > skorMerah){
-                    console.log("menang biru skor");
+                    console.log("menang biru");
                     let selesai = {
-                        id_pemenang: peserta.id_peserta_biru,
+                        id_pemenang: biru.id_peserta,
                         selesai: 1,
                         aktif: 0
                     }
                     result = await Seni.update(selesai, {where: {id: req.params.id_jadwal}})
                 }else if (skorBiru = skorMerah) {
                     if(devMerah < devBiru){
-                        console.log("menang merah deviasi");
+                        console.log("menang merah");
                         let selesai = {
-                            id_pemenang: peserta.id_peserta_merah,
+                            id_pemenang: merah.id_peserta,
                             selesai: 1,
                             aktif: 0
                         }
                         result = await Seni.update(selesai, {where: {id: req.params.id_jadwal}})
                     } else if (devBiru < devMerah){
-                        console.log("menang biru deviasi");
+                        console.log("menang biru");
                         let selesai = {
-                            id_pemenang: peserta.id_peserta_biru,
+                            id_pemenang: biru.id_peserta,
                             selesai: 1,
                             aktif: 0
                         }
@@ -601,7 +608,8 @@ module.exports = {
                 babak: req.body.babak,
                 selesai: req.body.selesai,
                 aktif: req.body.aktif,
-                id_pemenang: req.body.id_pemenang
+                id_pemenang: req.body.id_pemenang,
+                jml_juri: req.body.jml_juri,
             }
 
             if(req.body.partai){

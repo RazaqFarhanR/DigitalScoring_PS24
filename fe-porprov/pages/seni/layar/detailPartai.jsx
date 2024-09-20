@@ -41,13 +41,13 @@ const detail = () => {
     }
 
     if (item.kategori.toLowerCase() == 'tunggal') {
-      router.push ('/seni/layar/detailSelesai')
+      router.push ('/seni/layar/timer')
     } else if (item.kategori.toLowerCase() == 'ganda') {
-      router.push ('/seni/layar/detailSelesai')
+      router.push ('/seni/layar/timer')
     } else if (item.kategori.toLowerCase() == 'regu') {
-        router.push ('/seni/layar/detailSelesai')
+        router.push ('/seni/layar/timer')
     } else if (item.kategori.toLowerCase() == 'solo_kreatif') {
-      router.push ('/seni/layar/detailSelesai')
+      router.push ('/seni/layar/timer')
     } else {
       console.log('gagal');
     }
@@ -64,17 +64,18 @@ const detail = () => {
     }
 
     if (item.kategori.toLowerCase() == 'tunggal') {
-      router.push ('/seni/layar/detailSelesai')
+      router.push ('/seni/layar/timer')
     } else if (item.kategori.toLowerCase() == 'ganda') {
-      router.push ('/seni/layar/detailSelesai')
+      router.push ('/seni/layar/timer')
     } else if (item.kategori.toLowerCase() == 'regu') {
-        router.push ('/seni/layar/detailSelesai')
+        router.push ('/seni/layar/timer')
     } else if (item.kategori.toLowerCase() == 'solo_kreatif') {
-      router.push ('/seni/layar/detailSelesai')
+      router.push ('/seni/layar/timer')
     } else {
       console.log('gagal');
     }
   }
+
 
   // const getNilaiBiru = async () =>{
   //   const jadwal = JSON.parse (localStorage.getItem ('jadwalSeni'))
@@ -203,7 +204,7 @@ const detail = () => {
                           </div>
                           <div className="grid grid-cols-2">
                             <span className='bg-[#2C2F48] rounded-l-lg font-semibold py-1 text-xl'>Skor Akhir</span>
-                            <span className='text-[#2C2F48] border-2 border-[#2C2F48] rounded-r-lg text-xl font-bold'>{jadwal.nilai_biru?.skor_akhir?.toFixed(2)}</span>
+                            <span className='text-[#2C2F48] border-2 border-[#2C2F48] rounded-r-lg text-xl font-bold'>{jadwal.nilai_biru?.skor_akhir?.toFixed(3)}</span>
                           </div>
                         </div>
                         {/* detail nilai button */}
@@ -268,7 +269,7 @@ const detail = () => {
                           </div>
                           <div className="grid grid-cols-2">
                             <span className='bg-[#2C2F48] rounded-l-lg font-semibold text-xl py-1'>Skor Akhir</span>
-                            <span className='text-[#2C2F48] border-2 border-[#2C2F48] rounded-r-lg font-bold text-xl'>{jadwal.nilai_merah?.skor_akhir.toFixed(2)}</span>
+                            <span className='text-[#2C2F48] border-2 border-[#2C2F48] rounded-r-lg font-bold text-xl'>{jadwal.nilai_merah?.skor_akhir.toFixed(3)}</span>
                           </div>
                         </div>
                         {/* detail nilai button */}

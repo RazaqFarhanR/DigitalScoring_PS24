@@ -32,6 +32,7 @@ const modalJadwal = () => {
     const {babak, setBabak} = useContext (globalState)
     const {golongan, setGolongan} = useContext (globalState)
     const {jk, setJk} = useContext (globalState)
+    const {jmlJuri, setJmlJuri} = useContext (globalState)
 
     const headerConfig = () => {
         let token = localStorage.getItem("token")
@@ -94,7 +95,7 @@ const modalJadwal = () => {
     }
 
     const getJadwalTunggal = () => {
-        axios.get (BASE_URL + `/api/seni/jadwal/tunggal`, headerConfig())
+        axios.get (BASE_URL + `/api/seni/jadwal/TUNGGAL`, headerConfig())
         .then (res => {
             setDataJadwalTunggal (res.data.data)
         })
@@ -104,7 +105,7 @@ const modalJadwal = () => {
     }
 
     const getJadwalGanda = () => {
-        axios.get (BASE_URL + `/api/seni/jadwal/ganda`, headerConfig())
+        axios.get (BASE_URL + `/api/seni/jadwal/GANDA`, headerConfig())
         .then (res => {
             setDataJadwalGanda (res.data.data)
         })
@@ -114,7 +115,7 @@ const modalJadwal = () => {
     }
 
     const getJadwalRegu = () => {
-        axios.get (BASE_URL + `/api/seni/jadwal/regu`, headerConfig())
+        axios.get (BASE_URL + `/api/seni/jadwal/REGU`, headerConfig())
         .then (res => {
             setDataJadwalRegu (res.data.data)
         })
@@ -124,7 +125,7 @@ const modalJadwal = () => {
     }
 
     const getJadwalSoloKreatif = () => {
-        axios.get (BASE_URL + `/api/seni/jadwal/solo_kreatif`, headerConfig())
+        axios.get (BASE_URL + `/api/seni/jadwal/SOLO_KREATIF`, headerConfig())
         .then (res => {
             setDataJadwalSoloKreatif (res.data.data)
         })
@@ -143,6 +144,7 @@ const modalJadwal = () => {
             id_peserta_biru: idBiru,
             id_peserta_merah: idMerah,
             babak: babak,
+            jml_juri: jmlJuri
         }
         if (action === 'insert') {
             if (splitLoc.toString() === ('Tunggal')) { 
@@ -478,6 +480,25 @@ const modalJadwal = () => {
                                             required
                                             >        
                                             </input>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-row space-x-3 w-full">
+                                        <div className="w-2/6 flex justify-between">
+                                            <span>Jumlah Juri</span>
+                                            <span>:</span>
+                                        </div>
+                                        <div className="w-4/6">
+                                            <div className="relative w-full">
+                                                <div className='border-2 bg-[#212437] border-slate-200 rounded-lg px-2'>
+                                                    <select className='w-full bg-[#212437] focus:outline-none' value={jmlJuri} onChange = {(e) => setJmlJuri (e.target.value)} required>
+                                                        <option></option>
+                                                        <option value="4">4</option>
+                                                        <option value="6">6</option>
+                                                        <option value="8">8</option>
+                                                        <option value="10">10</option>
+                                                    </select>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

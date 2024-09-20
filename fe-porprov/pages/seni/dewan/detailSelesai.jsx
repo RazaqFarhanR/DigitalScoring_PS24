@@ -232,25 +232,67 @@ const detailSelesai = () => {
                             return (
                                 <table className='w-full table-fixed border-separate border-spacing-x-2'>
                                     <thead className='bg-[#2C2F48]'>
-                                        <tr>
-                                            <th colSpan={2} className="border-2 border-[#2C2F48]">Juri</th>
-                                            <th className='border-2 border-[#2C2F48]'>1</th>
-                                            <th className='border-2 border-[#2C2F48]'>2</th>
-                                            <th className='border-2 border-[#2C2F48]'>3</th>
-                                            <th className='border-2 border-[#2C2F48]'>4</th>
-                                            <th className='border-2 border-[#2C2F48]'>5</th>
-                                            <th className='border-2 border-[#2C2F48]'>6</th>
-                                            <th className='border-2 border-[#2C2F48]'>7</th>
-                                            <th className='border-2 border-[#2C2F48]'>8</th>
-                                            <th className='border-2 border-[#2C2F48]'>9</th>
-                                            <th className='border-2 border-[#2C2F48]'>10</th>
-                                        </tr>
+                                        {(() => {
+                                            if (jadwal.jml_juri === 4) {
+                                                return (
+                                                    <tr>
+                                                        <th colSpan={2} className="border-2 border-[#2C2F48]">Juri</th>
+                                                        <th className='border-2 border-[#2C2F48]'>1</th>
+                                                        <th className='border-2 border-[#2C2F48]'>2</th>
+                                                        <th className='border-2 border-[#2C2F48]'>3</th>
+                                                        <th className='border-2 border-[#2C2F48]'>4</th>
+                                                    </tr>
+                                                )
+                                            } else if (jadwal.jml_juri === 6) {
+                                                return (
+                                                    <tr>
+                                                        <th colSpan={2} className="border-2 border-[#2C2F48]">Juri</th>
+                                                        <th className='border-2 border-[#2C2F48]'>1</th>
+                                                        <th className='border-2 border-[#2C2F48]'>2</th>
+                                                        <th className='border-2 border-[#2C2F48]'>3</th>
+                                                        <th className='border-2 border-[#2C2F48]'>4</th>
+                                                        <th className='border-2 border-[#2C2F48]'>5</th>
+                                                        <th className='border-2 border-[#2C2F48]'>6</th>
+                                                    </tr>
+                                                )
+                                            } else if (jadwal.jml_juri === 8) {
+                                                return (
+                                                    <tr>
+                                                        <th colSpan={2} className="border-2 border-[#2C2F48]">Juri</th>
+                                                        <th className='border-2 border-[#2C2F48]'>1</th>
+                                                        <th className='border-2 border-[#2C2F48]'>2</th>
+                                                        <th className='border-2 border-[#2C2F48]'>3</th>
+                                                        <th className='border-2 border-[#2C2F48]'>4</th>
+                                                        <th className='border-2 border-[#2C2F48]'>5</th>
+                                                        <th className='border-2 border-[#2C2F48]'>6</th>
+                                                        <th className='border-2 border-[#2C2F48]'>7</th>
+                                                        <th className='border-2 border-[#2C2F48]'>8</th>
+                                                    </tr>
+                                                )
+                                            } else {
+                                                return (
+                                                    <tr>
+                                                        <th colSpan={2} className="border-2 border-[#2C2F48]">Juri</th>
+                                                        <th className='border-2 border-[#2C2F48]'>1</th>
+                                                        <th className='border-2 border-[#2C2F48]'>2</th>
+                                                        <th className='border-2 border-[#2C2F48]'>3</th>
+                                                        <th className='border-2 border-[#2C2F48]'>4</th>
+                                                        <th className='border-2 border-[#2C2F48]'>5</th>
+                                                        <th className='border-2 border-[#2C2F48]'>6</th>
+                                                        <th className='border-2 border-[#2C2F48]'>7</th>
+                                                        <th className='border-2 border-[#2C2F48]'>8</th>
+                                                        <th className='border-2 border-[#2C2F48]'>9</th>
+                                                        <th className='border-2 border-[#2C2F48]'>10</th>
+                                                    </tr>
+                                                )
+                                            }
+                                        })()}
                                     </thead> 
                                     <tbody className='text-center text-[#2C2F48] font-medium'>
                                         {/* Skor A */}
                                         <tr>
                                             <td colSpan={2} className="text-lg font-semibold border-2 border-[#2C2F48]">Skor A</td>
-                                            {nilai.map ((item, index) => (
+                                            {nilai.slice(0, jadwal.jml_juri).map((item, index) => (
                                                 <td key={index + 1} className='border-2 border-[#2C2F48]'>
                                                     <span>
                                                         {item.skor_a?.toFixed(2)}
@@ -261,7 +303,7 @@ const detailSelesai = () => {
                                         {/* Skor B */}
                                         <tr>
                                             <td colSpan={2} className="text-lg font-semibold border-2 border-[#2C2F48]">Kemantapan</td>
-                                            {nilai.map ((item, index) => (
+                                            {nilai.slice(0, jadwal.jml_juri).map((item, index) => (
                                                 <td key={index + 1} className='border-2 border-[#2C2F48]'>
                                                     <span>
                                                         {item.skor_b?.toFixed(2)}
@@ -272,7 +314,7 @@ const detailSelesai = () => {
                                         {/* Total skor */}
                                         <tr className='bg-[#2C2F48] text-white'>
                                             <td colSpan={2} className="text-lg font-semibold border-2 border-[#2C2F48]">Total Skor</td>
-                                            {nilai.map ((item, index) => (
+                                            {nilai.slice(0, jadwal.jml_juri).map((item, index) => (
                                                 <td key={index + 1} className='border-2 border-[#2C2F48]'>
                                                     <span>
                                                         {item.total_skor?.toFixed(2)}
@@ -287,25 +329,67 @@ const detailSelesai = () => {
                             return (
                                 <table className='w-full table-fixed border-separate border-spacing-x-2'>
                                     <thead className='bg-[#2C2F48]'>
-                                        <tr>
-                                            <th colSpan={2} className="border-2 border-[#2C2F48]">Juri</th>
-                                            <th className='border-2 border-[#2C2F48]'>1</th>
-                                            <th className='border-2 border-[#2C2F48]'>2</th>
-                                            <th className='border-2 border-[#2C2F48]'>3</th>
-                                            <th className='border-2 border-[#2C2F48]'>4</th>
-                                            <th className='border-2 border-[#2C2F48]'>5</th>
-                                            <th className='border-2 border-[#2C2F48]'>6</th>
-                                            <th className='border-2 border-[#2C2F48]'>7</th>
-                                            <th className='border-2 border-[#2C2F48]'>8</th>
-                                            <th className='border-2 border-[#2C2F48]'>9</th>
-                                            <th className='border-2 border-[#2C2F48]'>10</th>
-                                        </tr>
+                                    {(() => {
+                                            if (jadwal.jml_juri === 4) {
+                                                return (
+                                                    <tr>
+                                                        <th colSpan={2} className="border-2 border-[#2C2F48]">Juri</th>
+                                                        <th className='border-2 border-[#2C2F48]'>1</th>
+                                                        <th className='border-2 border-[#2C2F48]'>2</th>
+                                                        <th className='border-2 border-[#2C2F48]'>3</th>
+                                                        <th className='border-2 border-[#2C2F48]'>4</th>
+                                                    </tr>
+                                                )
+                                            } else if (jadwal.jml_juri === 6) {
+                                                return (
+                                                    <tr>
+                                                        <th colSpan={2} className="border-2 border-[#2C2F48]">Juri</th>
+                                                        <th className='border-2 border-[#2C2F48]'>1</th>
+                                                        <th className='border-2 border-[#2C2F48]'>2</th>
+                                                        <th className='border-2 border-[#2C2F48]'>3</th>
+                                                        <th className='border-2 border-[#2C2F48]'>4</th>
+                                                        <th className='border-2 border-[#2C2F48]'>5</th>
+                                                        <th className='border-2 border-[#2C2F48]'>6</th>
+                                                    </tr>
+                                                )
+                                            } else if (jadwal.jml_juri === 8) {
+                                                return (
+                                                    <tr>
+                                                        <th colSpan={2} className="border-2 border-[#2C2F48]">Juri</th>
+                                                        <th className='border-2 border-[#2C2F48]'>1</th>
+                                                        <th className='border-2 border-[#2C2F48]'>2</th>
+                                                        <th className='border-2 border-[#2C2F48]'>3</th>
+                                                        <th className='border-2 border-[#2C2F48]'>4</th>
+                                                        <th className='border-2 border-[#2C2F48]'>5</th>
+                                                        <th className='border-2 border-[#2C2F48]'>6</th>
+                                                        <th className='border-2 border-[#2C2F48]'>7</th>
+                                                        <th className='border-2 border-[#2C2F48]'>8</th>
+                                                    </tr>
+                                                )
+                                            } else {
+                                                return (
+                                                    <tr>
+                                                        <th colSpan={2} className="border-2 border-[#2C2F48]">Juri</th>
+                                                        <th className='border-2 border-[#2C2F48]'>1</th>
+                                                        <th className='border-2 border-[#2C2F48]'>2</th>
+                                                        <th className='border-2 border-[#2C2F48]'>3</th>
+                                                        <th className='border-2 border-[#2C2F48]'>4</th>
+                                                        <th className='border-2 border-[#2C2F48]'>5</th>
+                                                        <th className='border-2 border-[#2C2F48]'>6</th>
+                                                        <th className='border-2 border-[#2C2F48]'>7</th>
+                                                        <th className='border-2 border-[#2C2F48]'>8</th>
+                                                        <th className='border-2 border-[#2C2F48]'>9</th>
+                                                        <th className='border-2 border-[#2C2F48]'>10</th>
+                                                    </tr>
+                                                )
+                                            }
+                                        })()}
                                     </thead> 
                                     <tbody className='text-center text-[#2C2F48] font-medium'>
                                         {/* technique */}
                                         <tr>
                                             <td colSpan={2} className="text-lg font-semibold border-2 border-[#2C2F48]">TEKNIK</td>
-                                            {nilai.map ((item, index) => (
+                                            {nilai.slice(0, jadwal.jml_juri).map((item, index) => (
                                                 <td key={index + 1} className='border-2 border-[#2C2F48]'>
                                                     <span>
                                                         {item.technique?.toFixed(2)}
@@ -316,7 +400,7 @@ const detailSelesai = () => {
                                         {/* firmness */}
                                         <tr>
                                             <td colSpan={2} className="text-lg font-semibold border-2 border-[#2C2F48]">KEMANTAPAN</td>
-                                            {nilai.map ((item, index) => (
+                                            {nilai.slice(0, jadwal.jml_juri).map((item, index) => (
                                                 <td key={index + 1} className='border-2 border-[#2C2F48]'>
                                                     <span>
                                                         {item.firmness?.toFixed(2)}
@@ -327,7 +411,7 @@ const detailSelesai = () => {
                                         {/* soulfulness */}
                                         <tr>
                                             <td colSpan={2} className="text-lg font-semibold border-2 border-[#2C2F48]">EKSPRESI</td>
-                                            {nilai.map ((item, index) => (
+                                            {nilai.slice(0, jadwal.jml_juri).map((item, index) => (
                                                 <td key={index + 1} className='border-2 border-[#2C2F48]'>
                                                     <span>
                                                         {item.soulfulness?.toFixed(2)}
@@ -338,7 +422,7 @@ const detailSelesai = () => {
                                         {/* Total skor */}
                                         <tr className='bg-[#2C2F48] text-white'>
                                             <td colSpan={2} className="text-lg font-semibold border-2 border-[#2C2F48]">Total Skor</td>
-                                            {nilai.map ((item, index) => (
+                                            {nilai.slice(0, jadwal.jml_juri).map((item, index) => (
                                                 <td key={index + 1} className='border-2 border-[#2C2F48]'>
                                                     <span>
                                                         {item.total_skor?.toFixed(2)}

@@ -36,48 +36,37 @@ const {v4 : uuidv4} = require("uuid")
 module.exports = {
     addPukulanJuriMerah: async (req,res) =>{
         try {
-            const getNilai = await Nilai.findOne({
-                where: {id_jadwal : req.body.id_jadwal, babak: req.body.babak}  
+            const getDetail = await Detail.findOne({
+                where: {id_jadwal : req.body.id_jadwal, babak: req.body.babak},
+                attributes: ['id','id_jadwal', 'babak','id_nilai_merah']
             })
 
             const getJuri = await Juri.findOne({
-                where: {id: req.body.id_juri}
+                where: {id: req.body.id_juri},
+                attributes: ['id','no']
             })
             
             const juri = getJuri.no
-
+            
+            //cek data
             let start = new Date()
             let endDate = new Date()
             let setdetik = endDate.setMilliseconds((endDate.getMilliseconds()) + 3300)
             let end = new Date(setdetik)
-            
+
             //set data for poin juri 
             let data = {
                 id: uuidv4(),
-                id_poin: getNilai.id_nilai_merah,
+                id_nilai_tanding: getDetail.id_nilai_merah,
                 id_juri: getJuri.id,
                 sudut: "merah",
-                poin: req.body.poin,
+                poin: 1,
                 cek_start: start,
                 cek_end: end
             }
+
             let result = []
             if(juri === 1){
-                const cekPoin = await Juri1.findOne({
-                    where:{
-                        id_poin: getNilai.id_nilai_merah,
-                        id_juri: getJuri.id
-                    },
-                    order:[
-                        ['no', 'DESC']
-                    ]
-                })
-
-                if (cekPoin) {
-                    data.no = (cekPoin.no) + 1
-                } else {
-                    data.no = 1
-                }
                 result = await Juri1.create(data)
 
                 //cek apakah juri 2 atau 3 sudah memasukan nilai dalam waktu 3 detik 
@@ -85,6 +74,7 @@ module.exports = {
                 const cekJuri2 = await Juri2.findOne({
                     where:{
                         poin: 1,
+                        sudut: 'merah'
                     },
                     order:[['createdAt', 'DESC']]
                 })
@@ -92,7 +82,8 @@ module.exports = {
                 //get input juri 3 terakir
                 const cekJuri3 = await Juri3.findOne({
                     where:{
-                        poin: 1
+                        poin: 1,
+                        sudut: 'merah'
                     },
                     order:[['createdAt', 'DESC']]
                 })
@@ -107,6 +98,7 @@ module.exports = {
                         const juri2 = await Juri2.findOne({
                             where:{
                                 poin: 1,
+                                sudut: 'merah',
                                 cek_start: {[Op.between]: [result.cek_start, result.cek_end]}
                             }
                         })
@@ -115,17 +107,16 @@ module.exports = {
                         const juri3 = await Juri3.findOne({
                             where:{
                                 poin: 1,
+                                sudut: 'merah',
                                 cek_start: {[Op.between]: [result.cek_start, result.cek_end]}
                             }
                         })
-
-                        console.log(juri2);
 
                         //jika ada poin masuk
                         if (juri2 || juri3) {
                             let data_poin = {
                                 id: uuidv4(),
-                                id_poin: getNilai.id_nilai_merah,
+                                id_nilai_tanding: getDetail.id_nilai_merah,
                                 poin: result.poin 
                             }
                             let masuk = await poin_masuk.create(data_poin)
@@ -134,13 +125,13 @@ module.exports = {
 
                                 //update total poin pada tabel nilai
                                 const getPoin = await Poin.findOne({
-                                    where: {id: getNilai.id_nilai_merah}
+                                    where: {id: getDetail.id_nilai_merah}
                                 })
                                 let data_poin = {
                                     poin_masuk: (getPoin.poin_masuk) + (result.poin),
                                     total_poin: (getPoin.total_poin) + (result.poin)
                                 }
-                                await Poin.update(data_poin, {where:{id: getNilai.id_nilai_merah}})
+                                await Poin.update(data_poin, {where:{id: getDetail.id_nilai_merah}})
                                 .then(result => {
                                     console.log("total poin updated");
                                 })
@@ -151,12 +142,12 @@ module.exports = {
 
                                 //update total poin pada tabel jadwal
                                 const getJadwal = await Tanding.findOne({
-                                    where: {id: getNilai.id_jadwal}
+                                    where: {id: getDetail.id_jadwal}
                                 })
                                 let data_total = {
                                     total_merah: (getJadwal.total_merah) + (result.poin)
                                 }
-                                await Tanding.update(data_total, {where:{id: getNilai.id_jadwal}})
+                                await Tanding.update(data_total, {where:{id: getDetail.id_jadwal}})
                                 .then(result => {
                                     console.log("total nilai updated");
                                 })
@@ -196,21 +187,6 @@ module.exports = {
                     },3300)
                 }
             } else if(juri === 2){
-                const cekPoin = await Juri2.findOne({
-                    where:{
-                        id_poin: getNilai.id_nilai_merah,
-                        id_juri: getJuri.id
-                    },
-                    order:[
-                        ['createdAt', 'ASC']
-                    ]
-                })
-
-                if (cekPoin) {
-                    data.no = (cekPoin.no) + 1
-                } else {
-                    data.no = 1
-                }
                 result = await Juri2.create(data)
 
                 //cek apakah juri 1 atau 3 sudah memasukan nilai dalam waktu 3 detik terakhir 
@@ -218,6 +194,7 @@ module.exports = {
                 const cekJuri1 = await Juri1.findOne({
                     where:{
                         poin: 1,
+                        sudut: 'merah'
                     },
                     order:[['createdAt', 'DESC']]
                 })
@@ -225,7 +202,8 @@ module.exports = {
                 //get input juri 3 terakir
                 const cekJuri3 = await Juri3.findOne({
                     where:{
-                        poin: 1
+                        poin: 1,
+                        sudut: 'merah'
                     },
                     order:[['createdAt', 'DESC']]
                 })
@@ -240,6 +218,7 @@ module.exports = {
                         const juri1 = await Juri1.findOne({
                             where:{
                                 poin: 1,
+                                sudut: 'merah',
                                 cek_start: {[Op.between]: [result.cek_start, result.cek_end]}
                             }
                         })
@@ -248,16 +227,16 @@ module.exports = {
                         const juri3 = await Juri3.findOne({
                             where:{
                                 poin: 1,
+                                sudut: 'merah',
                                 cek_start: {[Op.between]: [result.cek_start, result.cek_end]}
                             }
                         })
-                        console.log(juri1);
 
                         //jika ada poin masuk
                         if (juri1 || juri3) {
                             let data_poin = {
                                 id: uuidv4(),
-                                id_poin: getNilai.id_nilai_merah,
+                                id_nilai_tanding: getDetail.id_nilai_merah,
                                 poin: result.poin 
                             }
                             let masuk = await poin_masuk.create(data_poin)
@@ -266,13 +245,13 @@ module.exports = {
 
                                 //update total poin pada tabel nilai
                                 const getPoin = await Poin.findOne({
-                                    where: {id: getNilai.id_nilai_merah}
+                                    where: {id: getDetail.id_nilai_merah}
                                 })
                                 let data_poin = {
                                     poin_masuk: (getPoin.poin_masuk) + (result.poin),
                                     total_poin: (getPoin.total_poin) + (result.poin)
                                 }
-                                await Poin.update(data_poin, {where:{id: getNilai.id_nilai_merah}})
+                                await Poin.update(data_poin, {where:{id: getDetail.id_nilai_merah}})
                                 .then(result => {
                                     console.log("total poin updated");
                                 })
@@ -283,12 +262,12 @@ module.exports = {
 
                                 //update total poin pada tabel jadwal
                                 const getJadwal = await Tanding.findOne({
-                                    where: {id: getNilai.id_jadwal}
+                                    where: {id: getDetail.id_jadwal}
                                 })
                                 let data_total = {
                                     total_merah: (getJadwal.total_merah) + (result.poin)
                                 }
-                                await Tanding.update(data_total, {where:{id: getNilai.id_jadwal}})
+                                await Tanding.update(data_total, {where:{id: getDetail.id_jadwal}})
                                 .then(result => {
                                     console.log("total nilai updated");
                                 })
@@ -327,21 +306,6 @@ module.exports = {
                     },3300)
                 }
             } else if(juri === 3){
-                const cekPoin = await Juri3.findOne({
-                    where:{
-                        id_poin: getNilai.id_nilai_merah,
-                        id_juri: getJuri.id
-                    },
-                    order:[
-                        ['createdAt', 'ASC']
-                    ]
-                })
-
-                if (cekPoin) {
-                    data.no = (cekPoin.no) + 1
-                } else {
-                    data.no = 1
-                }
                 result = await Juri3.create(data)
 
                 //cek apakah juri 1 atau 2 sudah memasukan nilai dalam waktu 3 detik terakhir 
@@ -349,6 +313,7 @@ module.exports = {
                 const cekJuri1 = await Juri1.findOne({
                     where:{
                         poin: 1,
+                        sudut: 'merah'
                     },
                     order:[['createdAt', 'DESC']]
                 })
@@ -356,7 +321,8 @@ module.exports = {
                 //get input juri 2 terakir
                 const cekJuri2 = await Juri2.findOne({
                     where:{
-                        poin: 1
+                        poin: 1,
+                        sudut: 'merah'
                     },
                     order:[['createdAt', 'DESC']]
                 })
@@ -371,6 +337,7 @@ module.exports = {
                         const juri1 = await Juri1.findOne({
                             where:{
                                 poin: 1,
+                                sudut: 'merah',
                                 cek_start: {[Op.between]: [result.cek_start, result.cek_end]}
                             }
                         })
@@ -379,6 +346,7 @@ module.exports = {
                         const juri2 = await Juri2.findOne({
                             where:{
                                 poin: 1,
+                                sudut: 'merah',
                                 cek_start: {[Op.between]: [result.cek_start, result.cek_end]}
                             }
                         })
@@ -388,7 +356,7 @@ module.exports = {
                         if (juri1 || juri2) {
                             let data_poin = {
                                 id: uuidv4(),
-                                id_poin: getNilai.id_nilai_merah,
+                                id_nilai_tanding: getDetail.id_nilai_merah,
                                 poin: result.poin 
                             }
                             let masuk = await poin_masuk.create(data_poin)
@@ -397,13 +365,13 @@ module.exports = {
 
                                 //update total poin pada tabel nilai
                                 const getPoin = await Poin.findOne({
-                                    where: {id: getNilai.id_nilai_merah}
+                                    where: {id: getDetail.id_nilai_merah}
                                 })
                                 let data_poin = {
                                     poin_masuk: (getPoin.poin_masuk) + (result.poin),
                                     total_poin: (getPoin.total_poin) + (result.poin)
                                 }
-                                await Poin.update(data_poin, {where:{id: getNilai.id_nilai_merah}})
+                                await Poin.update(data_poin, {where:{id: getDetail.id_nilai_merah}})
                                 .then(result => {
                                     console.log("total poin updated");
                                 })
@@ -414,12 +382,12 @@ module.exports = {
 
                                 //update total poin pada tabel jadwal
                                 const getJadwal = await Tanding.findOne({
-                                    where: {id: getNilai.id_jadwal}
+                                    where: {id: getDetail.id_jadwal}
                                 })
                                 let data_total = {
                                     total_merah: (getJadwal.total_merah) + (result.poin)
                                 }
-                                await Tanding.update(data_total, {where:{id: getNilai.id_jadwal}})
+                                await Tanding.update(data_total, {where:{id: getDetail.id_jadwal}})
                                 .then(result => {
                                     console.log("total nilai updated");
                                 })
@@ -458,7 +426,6 @@ module.exports = {
                     },3300)
                 }
             }
-
             return addResponse( req, res, result)
         } catch (error) {
             return errorResponse( req, res, error.message)

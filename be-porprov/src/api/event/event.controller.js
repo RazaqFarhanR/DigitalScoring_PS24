@@ -228,37 +228,24 @@ module.exports = {
             const event = await Event.findOne({
                 where:{
                     nama: req.body.nama,
-                    // password : md5(req.body.password)
+                    password : md5(req.body.password)
                 },
-                attributes: ['id', 'nama', 'password']
+                attributes: ['id', 'nama']
             })
             if(event){
-                let validpassword = event.password == md5(req.body.password)
-
-                if (validpassword) {
-                    let data = {
-                        id: event.id,
-                        nama: event.nama
-                    }
-                    // generate token
-                    let token = jwt.sign( {id: event.id, event: event.nama}, process.env.REFRESH_TOKEN_SECRET);
-                    res.json({
-                        logged: true,
-                        data: data,
-                        token: token
-                    })
-                }
-                else {
-                    res.status(400).json({ // mengembalikan response dengan status code 400 dan pesan error
-                        status: "false",
-                        message: "password salah",
-                    });
-                }
+                // generate token
+                let token = jwt.sign( {id: event.id, event: event.nama}, process.env.REFRESH_TOKEN_SECRET);
+                res.json({
+                    logged: true,
+                    data: event,
+                    token: token
+                })
             }else{
-                res.status(400).json({ // mengembalikan response dengan status code 400 dan pesan error
-                    status: "false",
-                    message: "user tidak ditemukan",
-                });
+                res.json({
+                    logged: false,
+                    message: "password salah",
+                    data: []
+                })
             }   
         } catch (error) {
             return errorResponse(req, res, error.message)

@@ -78,6 +78,12 @@ module.exports = {
                 }
             }
 
+            if (req.user.event_id != null) {
+                param = {
+                    event_id: req.user.event_id
+                }
+            }
+
             const tanding = await Tanding.findAll({
                 where:param,
                 attributes:{

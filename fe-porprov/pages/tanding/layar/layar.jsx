@@ -7,12 +7,12 @@ import Footer from '../components/footer'
 import TimerLayar from '../components/timerLayar'
 import ModalLayar from '../components/modalLayar'
 import { globalState } from '../../../context/context';
-import { useSocket } from '../../../context/socketContext'
+import socketIo from 'socket.io-client'
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-
+const socket = socketIo (BASE_URL)
 
 const layar = () => {
-    const socket = useSocket();
+
     const router = useRouter()
 
     // ini state
@@ -46,7 +46,7 @@ const layar = () => {
 
         setTimeout (() => {
             setVisiblePmj1 (false)
-        }, 2000)
+        }, 3000)
     }
     const onLightPmj2 = () => {
 
@@ -54,7 +54,7 @@ const layar = () => {
 
         setTimeout (() => {
             setVisiblePmj2 (false)
-        }, 2000)
+        }, 3000)
     }
     const onLightPmj3 = () => {
 
@@ -62,7 +62,7 @@ const layar = () => {
 
         setTimeout (() => {
             setVisiblePmj3 (false)
-        }, 2000)
+        }, 3000)
     }
 
     // pukulan biru
@@ -72,7 +72,7 @@ const layar = () => {
 
         setTimeout (() => {
             setVisiblePbj1 (false)
-        }, 2000)
+        }, 3000)
     }
     const onLightPbj2 = () => {
 
@@ -80,7 +80,7 @@ const layar = () => {
 
         setTimeout (() => {
             setVisiblePbj2 (false)
-        }, 2000)
+        }, 3000)
     }
     const onLightPbj3 = () => {
 
@@ -88,7 +88,7 @@ const layar = () => {
 
         setTimeout (() => {
             setVisiblePbj3 (false)
-        }, 2000)
+        }, 3000)
     }
 
     // pukulan merah
@@ -98,7 +98,7 @@ const layar = () => {
 
         setTimeout (() => {
             setVisibleTmj1 (false)
-        }, 2000)
+        }, 3000)
     }
     const onLightTmj2 = () => {
 
@@ -106,7 +106,7 @@ const layar = () => {
 
         setTimeout (() => {
             setVisibleTmj2 (false)
-        }, 2000)
+        }, 3000)
     }
     const onLightTmj3 = () => {
 
@@ -114,7 +114,7 @@ const layar = () => {
 
         setTimeout (() => {
             setVisibleTmj3 (false)
-        }, 2000)
+        }, 3000)
     }
 
     // pukulan biru
@@ -124,7 +124,7 @@ const layar = () => {
 
         setTimeout (() => {
             setVisibleTbj1 (false)
-        }, 2000)
+        }, 3000)
     }
     const onLightTbj2 = () => {
 
@@ -132,7 +132,7 @@ const layar = () => {
 
         setTimeout (() => {
             setVisibleTbj2 (false)
-        }, 2000)
+        }, 3000)
     }
     const onLightTbj3 = () => {
 
@@ -140,7 +140,7 @@ const layar = () => {
 
         setTimeout (() => {
             setVisibleTbj3 (false)
-        }, 2000)
+        }, 3000)
     }
 
     const getJadwalTanding = () => {

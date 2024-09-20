@@ -31,6 +31,7 @@ const jadwalRegu = () => {
     const [partai, setPartai] = useState ('')
     const [gelanggang, setGelanggang] =  useState ('')
     const [golongan, setGolongan] = useState ('')
+    const [jmlJuri, setJmlJuri] = useState ('')
     const [aktif, setAktif] = useState ('')
 
     const headerConfig = () => {
@@ -50,6 +51,7 @@ const jadwalRegu = () => {
         setPartai ('')
         setIdBiru ('')
         setIdMerah ('')
+        setJmlJuri ('')
     }
 
     const addModalPutri = () => {
@@ -61,6 +63,7 @@ const jadwalRegu = () => {
         setPartai ('')
         setIdBiru ('')
         setIdMerah ('')
+        setJmlJuri ('')
     }
 
     const editModal = (selectedItem) => {
@@ -74,6 +77,7 @@ const jadwalRegu = () => {
         setJk (selectedItem.jk)
         setBabak (selectedItem.babak)
         setGolongan(selectedItem.golongan)
+        setJmlJuri (selectedItem.jml_juri)
     }
 
     const deleteModal = (selectedId) => {
@@ -82,7 +86,7 @@ const jadwalRegu = () => {
     }
 
     const getJadwalRegu = () => {
-        axios.get (BASE_URL + `/api/seni/jadwal/regu`, headerConfig())
+        axios.get (BASE_URL + `/api/seni/jadwal/REGU`, headerConfig())
         .then (res => {
             setDataJadwalRegu (res.data.data)
         })
@@ -182,6 +186,7 @@ const jadwalRegu = () => {
                                             <th>Babak</th>
                                             <th className='w-[21%]'>Sudut Biru</th>
                                             <th className='w-[21%]'>Sudut Merah</th>
+                                            <th>Jumlah Juri</th>
                                             <th className='w-[10%]'>Aksi</th>
                                         </tr>
                                     </thead>
@@ -195,6 +200,7 @@ const jadwalRegu = () => {
                                             <td>{item.babak}</td>
                                             <td>{item.biru.nama1}<br></br>{item.biru.nama2}<br></br>{item.biru.nama3}<br></br>( {item.biru.kontingen} )</td>
                                             <td>{item.merah.nama1}<br></br>{item.merah.nama2}<br></br>{item.merah.nama3}<br></br>( {item.merah.kontingen} )</td>
+                                            <td>{item.jml_juri}</td>
                                             <td>
                                                 <div className="p-2 space-x-2">
                                                     <button onClick={() => editModal(item)} className='w-10 h-10 p-2 bg-green-600 rounded-xl'>
@@ -217,7 +223,7 @@ const jadwalRegu = () => {
                 {/* akhir konten utama */}
             </div>
 
-            <globalState.Provider value={{ showModalJadwal, setShowModalJadwal, action, setAction, dataJadwalRegu, setDataJadwalRegu, gelanggang, setGelanggang, partai, setPartai, idBiru, setIdBiru, idMerah, setIdMerah, idJadwal, setIdJadwal, golongan, setGolongan, jk, setJk, babak, setBabak}}>
+            <globalState.Provider value={{ showModalJadwal, setShowModalJadwal, action, setAction, dataJadwalRegu, setDataJadwalRegu, gelanggang, setGelanggang, partai, setPartai, idBiru, setIdBiru, idMerah, setIdMerah, idJadwal, setIdJadwal, golongan, setGolongan, jk, setJk, babak, setBabak, jmlJuri, setJmlJuri}}>
                 <ModalJadwal />
             </globalState.Provider>
 

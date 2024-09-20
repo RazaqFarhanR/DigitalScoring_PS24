@@ -31,6 +31,7 @@ const jadwalTunggal = () => {
   const [partai, setPartai] = useState ('')
   const [gelanggang, setGelanggang] = useState ('')
   const [golongan, setGolongan] = useState ('')
+  const [jmlJuri, setJmlJuri] = useState ('')
   const [aktif, setAktif] = useState ('')
 
   const headerConfig = () => {
@@ -51,6 +52,7 @@ const jadwalTunggal = () => {
     setIdBiru ('');
     setIdMerah ('');
     setBabak('');
+    setJmlJuri ('');
   }
 
   const addModalPutri = () => {
@@ -63,6 +65,7 @@ const jadwalTunggal = () => {
     setIdBiru ('');
     setIdMerah ('');
     setBabak('');
+    setJmlJuri ('');
   }
 
   const editModal = (selectedItem) => {
@@ -76,6 +79,7 @@ const jadwalTunggal = () => {
     setJk (selectedItem.jk)
     setBabak (selectedItem.babak)
     setGolongan(selectedItem.golongan)
+    setJmlJuri (selectedItem.jml_juri);
   }
 
   const deleteModal = (selectedId) => {
@@ -84,7 +88,7 @@ const jadwalTunggal = () => {
   }
 
   const getJadwalTunggal = () => {
-    axios.get (BASE_URL + '/api/seni/jadwal/tunggal', headerConfig())
+    axios.get (BASE_URL + '/api/seni/jadwal/TUNGGAL', headerConfig())
     .then((res) => {
       setDataJadwalTunggal(res.data.data);
     }).catch(err =>{
@@ -185,6 +189,7 @@ const jadwalTunggal = () => {
                     <th>Babak</th>
                     <th className='w-[21%]'>Sudut Biru</th>
                     <th className='w-[21%]'>Sudut Merah</th>
+                    <th>Jumlah Juri</th>
                     <th className='w-[10%]'>Aksi</th>
                   </tr>
                 </thead>
@@ -198,6 +203,7 @@ const jadwalTunggal = () => {
                     <td>{item.babak}</td>
                     <td>{item.biru?.nama1} - {item.biru?.kontingen}</td>
                     <td>{item.merah?.nama1} - {item.merah?.kontingen}</td>
+                    <td>{item.jml_juri}</td>
                     <td>
                       <div className="p-2 space-x-2">
                         <button onClick={() => editModal(item)} className='w-10 h-10 p-2 bg-green-600 rounded-xl'>
@@ -220,7 +226,7 @@ const jadwalTunggal = () => {
       {/* akhir konten utama */}
       </div>
 
-      <globalState.Provider value={{ showModalJadwal, setShowModalJadwal, action, setAction, dataJadwalTunggal, setDataJadwalTunggal, gelanggang, setGelanggang, partai, setPartai, idBiru, setIdBiru, idMerah, setIdMerah, idJadwal, setIdJadwal, golongan, setGolongan, jk, setJk, babak, setBabak}}>
+      <globalState.Provider value={{ showModalJadwal, setShowModalJadwal, action, setAction, dataJadwalTunggal, setDataJadwalTunggal, gelanggang, setGelanggang, partai, setPartai, idBiru, setIdBiru, idMerah, setIdMerah, idJadwal, setIdJadwal, golongan, setGolongan, jk, setJk, babak, setBabak, jmlJuri, setJmlJuri}}>
         <ModalJadwal />
       </globalState.Provider>
 

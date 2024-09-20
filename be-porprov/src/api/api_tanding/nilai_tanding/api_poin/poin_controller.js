@@ -73,7 +73,7 @@ module.exports = {
                                 attributes:["poin", "masuk", "createdAt"],
                             },
                         ]
-                    },  
+                    },
                 ],
                 order: [
                     [
@@ -83,6 +83,8 @@ module.exports = {
                     ]
                 ]
             })
+            // console.log(getPoin);
+            
 
             let result = getPoin
 
@@ -259,7 +261,7 @@ module.exports = {
                     } else {
                         console.log("poin tidak sah");
                     }
-                },2300)
+                },3300)
             }
             return addResponse( req, res, Input )
         } catch (error) {

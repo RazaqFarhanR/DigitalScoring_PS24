@@ -35,7 +35,7 @@ const ModalGelanggang = () => {
         })
         .catch (err => {
             console.log(err.message);
-            console.log(err);
+            console.log(err.response.data.message);
         })
     }
 

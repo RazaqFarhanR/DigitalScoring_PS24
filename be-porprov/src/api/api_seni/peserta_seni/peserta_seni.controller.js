@@ -89,8 +89,8 @@ module.exports = {
                         id: uuidv4(),
                         kategori: 'tunggal',
                         event_id: req.user.event_id,
-                        jk: tgr[2],
-                        golongan: tgr[1],                    
+                        jk: tgr[1],
+                        kelas: tgr[2],                    
                         nama1: tgr[3],
                         kontingen: tgr[4]
                     }
@@ -132,9 +132,8 @@ module.exports = {
                     let input = {
                         id: uuidv4(),
                         kategori: 'ganda',
-                        event_id: req.user.event_id,
                         jk: tgr[1],
-                        golongan: tgr[2],                    
+                        kelas: tgr[2],                    
                         nama1: tgr[3],
                         nama2: tgr[4],
                         kontingen: tgr[5]
@@ -180,10 +179,9 @@ module.exports = {
 
                     let input = {
                         id: uuidv4(),
-                        event_id: req.user.event_id,
                         kategori: 'regu',
                         jk: tgr[1],
-                        golongan: tgr[2],                    
+                        kelas: tgr[2],                    
                         nama1: tgr[3],
                         nama2: tgr[4],
                         nama3: tgr[5],
@@ -225,12 +223,11 @@ module.exports = {
 
                     let input = {
                         id: uuidv4(),
-                        event_id: req.user.event_id,
                         kategori: 'solo_kreatif',
                         jk: tgr[1],
-                        golongan: tgr[2],                    
-                        nama1: tgr[3],
-                        kontingen: tgr[4]
+                        kelas: tgr[2],                    
+                        nama1: tgr[4],
+                        kontingen: tgr[5]
                     }
 
                     const result = await Peserta.create(input)

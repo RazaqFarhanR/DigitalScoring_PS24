@@ -65,6 +65,8 @@ const gelanggang = () => {
         router.push('/tanding/layar/' + selectedItem.gelanggang)
       }
     }
+
+    console.log(kategori);
 }
 
 //   const isLogged = () => {
